@@ -140,7 +140,6 @@ class Player {
             }
             StringBuilder output = new StringBuilder();
 
-            Set<String> occupiedPositions = new HashSet<>();
 
             for (Pac p : myPacs) {
                 //check if can use ability
@@ -171,15 +170,7 @@ class Player {
                 int[] move = bfsBestMove(p);
                 String moveKey = move[0] + "," + move[1];
 
-                if (occupiedPositions.contains(moveKey)) {
-                    // Collision! Attempt an alternative move or stay put.
-                    move = findAlternativeMove(p, occupiedPositions);
-                    moveKey = move[0] + "," + move[1];
-                }
-
                 // Mark this cell as occupied
-                occupiedPositions.add(moveKey);
-
 
                 output.append("MOVE ")
                         .append(p.id).append(" ")
@@ -190,26 +181,6 @@ class Player {
             System.out.println(output.toString());
         }
 
-    }
-    static int[] findAlternativeMove(Pac pac, Set<String> occupiedPositions) {
-        // For example, try each direction in DIRECTIONS
-        for (int[] dir : DIRECTIONS) {
-            int nx = pac.x + dir[0];
-            int ny = pac.y + dir[1];
-
-            // Handle horizontal wrapping
-            if (nx < 0) nx = width - 1;
-            else if (nx >= width) nx = 0;
-            // No vertical wrapping
-            if (ny < 0 || ny >= height) continue;
-
-            // If not a wall or occupied
-            if (board[ny][nx] != WALL && !occupiedPositions.contains(nx + "," + ny)) {
-                return new int[]{nx, ny};
-            }
-        }
-        // If no alternative found, stay in place
-        return new int[]{pac.x, pac.y};
     }
     static int[] bfsBestMove(Pac pac) {
         Queue<int[]> queue = new LinkedList<>();
